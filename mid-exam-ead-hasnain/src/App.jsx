@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 const data = [
   {
@@ -77,37 +77,116 @@ const data = [
   },
 ];
 
+const cities = ["New York", "San Francisco", "Chicago", "Los Angeles", "Houston", "Miami", "Seattle", "Boston", "Denver", "Atlanta"];
+const occupations = ["Engineer", "Designer", "Accountant", "Teacher", "Doctor", "Artist", "Software Engineer", "Lawyer", "Marketing Manager", "Entrepreneur"];
+
 function App() {
   const [nameFilter, setNameFilter] = useState("");
   const [ageFilter, setAgeFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
+  const [occupationFilter, setOccupationFilter] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
   const handleNameFilterChange = (event) => {
     setNameFilter(event.target.value);
-    filterData(event.target.value, ageFilter);
   };
 
   const handleAgeFilterChange = (event) => {
     setAgeFilter(event.target.value);
-    filterData(nameFilter, event.target.value);
   };
 
-  const filterData = (name, age) => {
+  const handleCityFilterChange = (event) => {
+    setCityFilter(event.target.value);
+  };
+
+  const handleOccupationFilterChange = (event) => {
+    setOccupationFilter(event.target.value);
+  };
+
+  const filterData = () => {
     const filteredData = data.filter((item) => {
-      if (name && age) {
+      if (nameFilter && ageFilter && cityFilter && occupationFilter) {
         return (
-          item.name.toLowerCase().includes(name.toLowerCase()) &&
-          item.age.toString().includes(age)
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.age.toString().includes(ageFilter) &&
+          item.city === cityFilter &&
+          item.occupation === occupationFilter
         );
-      } else if (name) {
-        return item.name.toLowerCase().includes(name.toLowerCase());
-      } else if (age) {
-        return item.age.toString().includes(age);
+      } else if (nameFilter && ageFilter && cityFilter) {
+        return (
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.age.toString().includes(ageFilter) &&
+          item.city === cityFilter
+        );
+      } else if (nameFilter && ageFilter && occupationFilter) {
+        return (
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.age.toString().includes(ageFilter) &&
+          item.occupation === occupationFilter
+        );
+      } else if (nameFilter && cityFilter && occupationFilter) {
+        return (
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.city === cityFilter &&
+          item.occupation === occupationFilter
+        );
+      } else if (ageFilter && cityFilter && occupationFilter) {
+        return (
+          item.age.toString().includes(ageFilter) &&
+          item.city === cityFilter &&
+          item.occupation === occupationFilter
+        );
+      } else if (nameFilter && ageFilter) {
+        return (
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.age.toString().includes(ageFilter)
+        );
+      } else if (nameFilter && cityFilter) {
+        return (
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.city === cityFilter
+        );
+      } else if (nameFilter && occupationFilter) {
+        return (
+          item.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          item.occupation === occupationFilter
+        );
+      } else if (ageFilter && cityFilter) {
+        return (
+          item.age.toString().includes(ageFilter) &&
+          item.city === cityFilter
+        );
+      } else if (ageFilter && occupationFilter) {
+        return (
+          item.age.toString().includes(ageFilter) &&
+          item.occupation === occupationFilter
+        );
+      } else if (cityFilter && occupationFilter) {
+        return (
+          item.city === cityFilter &&
+          item.occupation === occupationFilter
+        );
+      } else if (nameFilter) {
+        return item.name.toLowerCase().includes(nameFilter.toLowerCase());
+      } else if (ageFilter) {
+        return item.age.toString().includes(ageFilter);
+      } else if (cityFilter) {
+        return item.city === cityFilter;
+      } else if (occupationFilter) {
+        return item.occupation === occupationFilter;
       } else {
         return true;
       }
     });
     setFilteredData(filteredData);
+  };
+
+  const resetFilter = () => {
+    setNameFilter("");
+    setAgeFilter("");
+    setCityFilter("");
+    setOccupationFilter("");
+    setFilteredData(data);
   };
 
   return (
@@ -118,21 +197,51 @@ function App() {
           type="text"
           id="nameFilter"
           name="nameFilter"
+          placeholder="Enter name"
           value={nameFilter}
           onChange={handleNameFilterChange}
         />
-      </div>
-      <div>
         <label htmlFor="ageFilter">Age:</label>
         <input
-          type="text"
+          type="number"
           id="ageFilter"
           name="ageFilter"
+          placeholder="Enter age"
           value={ageFilter}
           onChange={handleAgeFilterChange}
         />
+        <label htmlFor="cityFilter">City:</label>
+        <select
+          id="cityFilter"
+          name="cityFilter"
+          value={cityFilter}
+          onChange={handleCityFilterChange}
+        >
+          <option value="">Select City</option>
+          {cities.map((city) => (
+            <option key={city} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
+        <label htmlFor="occupationFilter">Occupation:</label>
+        <select
+          id="occupationFilter"
+          name="occupationFilter"
+          value={occupationFilter}
+          onChange={handleOccupationFilterChange}
+        >
+          <option value="">Select Occupation</option>
+          {occupations.map((occupation) => (
+            <option key={occupation} value={occupation}>
+              {occupation}
+            </option>
+          ))}
+        </select>
       </div>
-      <button onClick={() => filterData(nameFilter, ageFilter)}>Apply Filter</button>
+      <br />
+      <button onClick={filterData}>Apply Filter</button>
+      <button onClick={resetFilter}>Reset Filter</button>
       <table>
         <thead>
           <tr>
