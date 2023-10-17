@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 const data = [
@@ -78,8 +78,61 @@ const data = [
 ];
 
 function App() {
+  const [nameFilter, setNameFilter] = useState("");
+  const [ageFilter, setAgeFilter] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
+
+  const handleNameFilterChange = (event) => {
+    setNameFilter(event.target.value);
+    filterData(event.target.value, ageFilter);
+  };
+
+  const handleAgeFilterChange = (event) => {
+    setAgeFilter(event.target.value);
+    filterData(nameFilter, event.target.value);
+  };
+
+  const filterData = (name, age) => {
+    const filteredData = data.filter((item) => {
+      if (name && age) {
+        return (
+          item.name.toLowerCase().includes(name.toLowerCase()) &&
+          item.age.toString().includes(age)
+        );
+      } else if (name) {
+        return item.name.toLowerCase().includes(name.toLowerCase());
+      } else if (age) {
+        return item.age.toString().includes(age);
+      } else {
+        return true;
+      }
+    });
+    setFilteredData(filteredData);
+  };
+
   return (
     <div>
+      <div>
+        <label htmlFor="nameFilter">Name:</label>
+        <input
+          type="text"
+          id="nameFilter"
+          name="nameFilter"
+          value={nameFilter}
+          onChange={handleNameFilterChange}
+        />
+      </div>
+      <div>
+        <label htmlFor="ageFilter">Age:</label>
+        <input
+          type="text"
+          id="ageFilter"
+          name="ageFilter"
+          value={ageFilter}
+          onChange={handleAgeFilterChange}
+        />
+      </div>
+      <button onClick={() => filterData(nameFilter, ageFilter)}>Apply Filter</button>
       <table>
         <thead>
           <tr>
@@ -91,7 +144,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {filteredData.map((item) => (
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.name}</td>
